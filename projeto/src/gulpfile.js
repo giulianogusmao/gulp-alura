@@ -17,14 +17,14 @@ gulp.task('clean', () => {
         .pipe(clean());
 });
 
-gulp.task('build-img', ['clean'], () => {
+gulp.task('build-img', () => {
     gulp
         .src(`${path.origin}img/**/*`)
         // .pipe(imagemin())
         .pipe(gulp.dest(`${path.deploy}img`));
 });
 
-gulp.task('build-js', ['clean'], () => {
+gulp.task('build-js', () => {
     let folder = 'js/';
 
     gulp
@@ -38,7 +38,15 @@ gulp.task('build-js', ['clean'], () => {
         .pipe(gulp.dest(`${path.deploy}${folder}`));
 });
 
-gulp.task('build-html', ['clean'], () => {
+gulp.task('build-css', () => {
+    let folder = 'css/';
+
+    gulp
+        .src(`${path.origin}${folder}**/*`)
+        .pipe(gulp.dest(`${path.deploy}${folder}`));
+});
+
+gulp.task('build-html', () => {
     let folder = '';
 
     gulp
@@ -49,4 +57,4 @@ gulp.task('build-html', ['clean'], () => {
         .pipe(gulp.dest(`${path.deploy}${folder}`));
 });
 
-gulp.task('default', ['build-html', 'build-js', 'build-img']);
+gulp.task('default', ['clean'], () => gulp.start('build-html', 'build-js', 'build-img', 'build-css'));
