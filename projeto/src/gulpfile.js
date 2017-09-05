@@ -1,13 +1,14 @@
 const gulp = require('gulp')
-    , clean = require('gulp-clean')
-    , imagemin = require('gulp-imagemin')
-    , uglify = require('gulp-uglify')
-    , cssmin = require('gulp-cssmin')
-    , concat = require('gulp-concat')
-    , htmlReplace = require('gulp-html-replace')
-    , jshint = require('gulp-jshint')
-    , csslint = require('gulp-csslint')
-    , rename = require('gulp-rename')
+    , clean = require('gulp-clean')                             // exclui diretório
+    , imagemin = require('gulp-imagemin')                       // minimifica imagens
+    , uglify = require('gulp-uglify')                           // minimifica scripts js
+    , concat = require('gulp-concat')                           // concatena scripts
+    , cssmin = require('gulp-cssmin')                           // minimifica css
+    , htmlReplace = require('gulp-html-replace')                // substitui blocos de scripts do html pelo bundle
+    , jshint = require('gulp-jshint')                           // valida erros e qualidade dos scripts
+    , csslint = require('gulp-csslint')                         // valida erros e qualidade do css
+    , rename = require('gulp-rename')                           // renomeia arquivos
+    , autoprefixer = require('gulp-autoprefixer')               // inclui prefixos de suporte do css ex.: -webkit-transition
     , es = require('event-stream')
     , browserSync = require('browser-sync').create();
 
@@ -51,6 +52,7 @@ gulp.task('build-css', () => {
         .merge([
             gulp.src(`${path.origin}${folder}**/*`),
         ])
+        .pipe(autoprefixer())
         .pipe(cssmin())
         .pipe(gulp.dest(`${path.deploy}${folder}`));
 });
