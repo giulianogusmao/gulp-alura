@@ -3,6 +3,7 @@ const gulp = require('gulp')
     , imagemin = require('gulp-imagemin')                       // minimifica imagens
     , uglify = require('gulp-uglify')                           // minimifica scripts js
     , concat = require('gulp-concat')                           // concatena scripts
+    , sass = require('gulp-sass')                               // processa o arquivo scss para css
     , cssmin = require('gulp-cssmin')                           // minimifica css
     , htmlReplace = require('gulp-html-replace')                // substitui blocos de scripts do html pelo bundle
     , jshint = require('gulp-jshint')                           // valida erros e qualidade dos scripts
@@ -24,14 +25,14 @@ gulp.task('clean', () => {
         .pipe(clean());
 });
 
-gulp.task('build-img', () => {
+gulp.task('img', () => {
     gulp
         .src(`${path.origin}img/**/*`)
         // .pipe(imagemin())
         .pipe(gulp.dest(`${path.deploy}img`));
 });
 
-gulp.task('build-js', () => {
+gulp.task('js', () => {
     let folder = 'js/';
 
     gulp
@@ -45,7 +46,14 @@ gulp.task('build-js', () => {
         .pipe(gulp.dest(`${path.deploy}${folder}`));
 });
 
-gulp.task('build-css', () => {
+gulp.task('sass', () => {
+    return gulp
+        .src(`${path.origin}sass/**/*.scss`)
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest(`${path.origin}css/`));
+});
+
+gulp.task('css', ['sass'], () => {
     let folder = 'css/';
 
     es
@@ -57,7 +65,7 @@ gulp.task('build-css', () => {
         .pipe(gulp.dest(`${path.deploy}${folder}`));
 });
 
-gulp.task('build-html', () => {
+gulp.task('html', () => {
     let folder = '';
 
     gulp
@@ -80,13 +88,18 @@ gulp.task('server', () => {
 
     gulp.watch('./*.html').on('change', browserSync.reload);
 
+    // atualizando o css apartir dos arquivos sass
+    gulp.watch('./sass/*.scss').on('change', (event) => {
+        gulp.start('sass');
+    });
+
     // validando código css
     gulp.watch('./css/*.css').on('change', (event) => {
         gulp
             .src(event.path)
             .pipe(csslint())
             .pipe(csslint.formatter());
-            
+
         browserSync.reload();
     });
 
@@ -101,4 +114,4 @@ gulp.task('server', () => {
     });
 });
 
-gulp.task('default', ['clean'], () => gulp.start('build-html', 'build-js', 'build-img', 'build-css'));
+gulp.task('default', ['clean'], () => gulp.start('html', 'js', 'img', 'css'));
