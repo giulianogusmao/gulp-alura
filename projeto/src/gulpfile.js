@@ -25,11 +25,17 @@ gulp.task('build-img', ['clean'], () => {
 });
 
 gulp.task('build-js', ['clean'], () => {
+    let folder = 'js/';
+
     gulp
-        .src(`${path.origin}js/**/*.js`)
+        .src([
+            `${path.origin}${folder}jquery.js`,
+            `${path.origin}${folder}home.js`,
+            `${path.origin}${folder}produto.js`,
+        ])
         .pipe(uglify())
         .pipe(concat("bundle.min.js"))
-        .pipe(gulp.dest(`${path.deploy}js`));
+        .pipe(gulp.dest(`${path.deploy}${folder}`));
 });
 
 gulp.task('build-html', ['clean'], () => {
