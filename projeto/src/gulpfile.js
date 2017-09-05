@@ -2,10 +2,13 @@ const gulp = require('gulp')
     , clean = require('gulp-clean')
     , imagemin = require('gulp-imagemin')
     , uglify = require('gulp-uglify')
+    , cssmin = require('gulp-cssmin')
     , concat = require('gulp-concat')
     , htmlReplace = require('gulp-html-replace')
     , jshint = require('gulp-jshint')
     , csslint = require('gulp-csslint')
+    , rename = require('gulp-rename')
+    , es = require('event-stream')
     , browserSync = require('browser-sync').create();
 
 let path = {
@@ -44,8 +47,11 @@ gulp.task('build-js', () => {
 gulp.task('build-css', () => {
     let folder = 'css/';
 
-    gulp
-        .src(`${path.origin}${folder}**/*`)
+    es
+        .merge([
+            gulp.src(`${path.origin}${folder}**/*`),
+        ])
+        .pipe(cssmin())
         .pipe(gulp.dest(`${path.deploy}${folder}`));
 });
 
@@ -55,7 +61,8 @@ gulp.task('build-html', () => {
     gulp
         .src(`${path.origin}${folder}**/*.html`)
         .pipe(htmlReplace({
-            scripts: 'js/bundle.min.js'
+            scripts: 'js/bundle.min.js',
+            cssIndex: 'css/index.min.css',
         }))
         .pipe(gulp.dest(`${path.deploy}${folder}`));
 });
