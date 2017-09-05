@@ -4,6 +4,7 @@ const imagemin = require('gulp-imagemin');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
 const htmlReplace = require('gulp-html-replace');
+const browserSync = require('browser-sync').create();
 
 let path = {
     origin: './',
@@ -55,6 +56,19 @@ gulp.task('build-html', () => {
             scripts: 'js/bundle.min.js'
         }))
         .pipe(gulp.dest(`${path.deploy}${folder}`));
+});
+
+gulp.task('server', () => {
+    browserSync.init({
+        server: {
+            baseDir: './',
+            // port: '3000'
+        }
+    });
+
+    gulp.watch('./**/*.css').on('change', browserSync.reload);
+    gulp.watch('./js/*.js').on('change', browserSync.reload);
+    gulp.watch('./**/*.html').on('change', browserSync.reload);
 });
 
 gulp.task('default', ['clean'], () => gulp.start('build-html', 'build-js', 'build-img', 'build-css'));
