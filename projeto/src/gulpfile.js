@@ -3,6 +3,7 @@ const clean = require('gulp-clean');
 const imagemin = require('gulp-imagemin');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
+const htmlReplace = require('gulp-html-replace');
 
 let path = {
     origin: './',
@@ -18,12 +19,12 @@ gulp.task('clean', () => {
 
 gulp.task('build-img', ['clean'], () => {
     gulp
-        .src(`${path.origin}img/*.png`)
-        .pipe(imagemin())
+        .src(`${path.origin}img/**/*`)
+        // .pipe(imagemin())
         .pipe(gulp.dest(`${path.deploy}img`));
 });
 
-gulp.task('build-js', ['clean'], () => {    
+gulp.task('build-js', ['clean'], () => {
     gulp
         .src(`${path.origin}js/**/*.js`)
         .pipe(uglify())
@@ -31,4 +32,15 @@ gulp.task('build-js', ['clean'], () => {
         .pipe(gulp.dest(`${path.deploy}js`));
 });
 
-gulp.task('default', ['build-js', 'build-img']);
+gulp.task('build-html', ['clean'], () => {
+    let folder = '';
+
+    gulp
+        .src(`${path.origin}${folder}**/*.html`)
+        .pipe(htmlReplace({
+            scripts: 'js/bundle.min.js'
+        }))
+        .pipe(gulp.dest(`${path.deploy}${folder}`));
+});
+
+gulp.task('default', ['build-html', 'build-js', 'build-img']);
