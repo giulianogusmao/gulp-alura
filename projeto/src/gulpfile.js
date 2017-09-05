@@ -1,10 +1,12 @@
-const gulp = require('gulp');
-const clean = require('gulp-clean');
-const imagemin = require('gulp-imagemin');
-const uglify = require('gulp-uglify');
-const concat = require('gulp-concat');
-const htmlReplace = require('gulp-html-replace');
-const browserSync = require('browser-sync').create();
+const gulp = require('gulp')
+    , clean = require('gulp-clean')
+    , imagemin = require('gulp-imagemin')
+    , uglify = require('gulp-uglify')
+    , concat = require('gulp-concat')
+    , htmlReplace = require('gulp-html-replace')
+    , jshint = require('gulp-jshint')
+    , csslint = require('gulp-csslint')
+    , browserSync = require('browser-sync').create();
 
 let path = {
     origin: './',
@@ -62,13 +64,32 @@ gulp.task('server', () => {
     browserSync.init({
         server: {
             baseDir: './',
-            // port: '3000'
+            port: '3000',
+            // proxy: "localhost:3000" // carregando browserSync junto com outro servidor. ex.: xampp php
         }
     });
 
-    gulp.watch('./**/*.css').on('change', browserSync.reload);
-    gulp.watch('./js/*.js').on('change', browserSync.reload);
-    gulp.watch('./**/*.html').on('change', browserSync.reload);
+    gulp.watch('./*.html').on('change', browserSync.reload);
+
+    // validando código css
+    gulp.watch('./css/*.css').on('change', (event) => {
+        gulp
+            .src(event.path)
+            .pipe(csslint())
+            .pipe(csslint.formatter());
+            
+        browserSync.reload();
+    });
+
+    // validando código javascript
+    gulp.watch('./js/*.js').on('change', (event) => {
+        gulp
+            .src(event.path)
+            .pipe(jshint())
+            .pipe(jshint.reporter('jshint-stylish', { beep: true }));
+
+        browserSync.reload();
+    });
 });
 
 gulp.task('default', ['clean'], () => gulp.start('build-html', 'build-js', 'build-img', 'build-css'));
