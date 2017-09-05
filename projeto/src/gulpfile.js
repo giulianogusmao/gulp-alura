@@ -114,4 +114,9 @@ gulp.task('server', () => {
     });
 });
 
-gulp.task('default', ['clean'], () => gulp.start('html', 'js', 'img', 'css'));
+gulp.task('default', ['clean'], () => gulp.start(
+    'html'
+    , 'js'
+    , 'img'
+    , 'css'
+));
